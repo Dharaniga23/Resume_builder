@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Download } from 'lucide-react';
 import ResumeForm from './components/ResumeForm';
 import ResumePreview from './components/ResumePreview';
+import TemplateSelector from './components/TemplateSelector';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import './App.css';
@@ -30,6 +31,8 @@ function App() {
     { id: 'certifications', label: 'Certifications' },
     { id: 'skills', label: 'Skills' }
   ]);
+
+  const [selectedTemplate, setSelectedTemplate] = useState('modern');
 
   const handleDownload = async () => {
     const element = document.getElementById('resume-preview');
@@ -60,22 +63,35 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <header className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem' }}>Resume Builder</h1>
-        <button onClick={handleDownload}>
-          <Download size={20} />
-          Download PDF
+    <div className="container" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <header className="flex justify-between items-center glass-panel" style={{ padding: '0.75rem 2rem', marginBottom: '1rem' }}>
+        <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0, color: '#3b82f6' }}>Resume Builder <span className="text-gray-500 font-normal">Pro</span></h1>
+        <button onClick={handleDownload} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition-all shadow-lg shadow-blue-900/20">
+          <Download size={18} /> Download PDF
         </button>
       </header>
 
-      <div className="grid grid-cols-2 gap-4 main-content">
-        <div className="glass-panel">
-          <ResumeForm data={resumeData} updateData={setResumeData} sectionOrder={sectionOrder} setSectionOrder={setSectionOrder} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 main-content" style={{ flex: 1, overflow: 'hidden', padding: '0 2rem 1rem' }}>
+        {/* Left Side: Form */}
+        <div className="lg:col-span-4 h-full scroll-panel pr-2 custom-scrollbar">
+          <div className="mb-6 glass-panel">
+            <TemplateSelector selected={selectedTemplate} onSelect={setSelectedTemplate} />
+          </div>
+          <ResumeForm
+            data={resumeData}
+            updateData={setResumeData}
+            sectionOrder={sectionOrder}
+            setSectionOrder={setSectionOrder}
+          />
         </div>
 
-        <div className="resume-container">
-          <ResumePreview data={resumeData} sectionOrder={sectionOrder} />
+        {/* Right Side: Preview */}
+        <div className="lg:col-span-8 h-full scroll-panel bg-gray-900/30 rounded-2xl p-6 border border-gray-800 custom-scrollbar">
+          <ResumePreview
+            data={resumeData}
+            sectionOrder={sectionOrder}
+            selectedTemplate={selectedTemplate}
+          />
         </div>
       </div>
     </div>
